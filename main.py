@@ -8,20 +8,20 @@ connection = pymongo.MongoClient("")
 db = connection[""]
 collection = db[""]
 
-
 app = flask.Flask(__name__)
-
 limiter = Limiter(
     app,
     key_func=get_remote_address,
     default_limits=["60 per hour"])
+
 
 @app.route('/ping', methods=['GET'])
 @limiter.limit("1 per minute")
 def ping():
     return jsonify({"status": "API is alive"})
 
-@app.route('/freegames', methods=['GET'])
+
+@app.route('/freegames', methods=['GET'], defaults={'type': 'all'})
 @limiter.limit("1 per minute")
 def freegames():
     type = request.args.get('type')
@@ -49,6 +49,7 @@ def ratelimit_handler(e):
             jsonify(error=f"ratelimit exceeded {e.description}")
             , 429
     )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
