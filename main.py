@@ -21,7 +21,7 @@ def ping():
     return jsonify({"status": "API is alive"})
 
 
-@app.route('/freegames', methods=['GET'])
+@app.route('/freegames', methods=['GET'], defaults={'type': 'all'})
 @limiter.limit("1 per minute")
 def freegames():
     type = request.args.get('type')
